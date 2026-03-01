@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-
 from dotenv import load_dotenv
 from huggingface_hub import InferenceClient
 from PIL import Image
@@ -8,9 +7,15 @@ from PIL import Image
 load_dotenv()
 
 DEFAULT_MODEL = "black-forest-labs/FLUX.1-schnell"
+PROMPTS_DIR = Path("prompts")
+
+
+def load_file(path: Path) -> str:
+    return path.read_text(encoding="utf-8")
+
 
 def generate_image(dream_text: str, model_id: str = DEFAULT_MODEL) -> Image.Image:
-    
+   
     dream_text = dream_text.strip()
     if not dream_text:
         raise ValueError("La description ne peut pas être vide.")
@@ -19,9 +24,13 @@ def generate_image(dream_text: str, model_id: str = DEFAULT_MODEL) -> Image.Imag
     if not token:
         raise RuntimeError("Token HF_TOKEN manquant dans .env")
 
-    # Utiliser l'API Hugging Face Inference
+    # Charger le template cartoon
+    cartoon_template = load_file(PROMPTS_DIR / "cartoon_template.txt")
+    
+    enhanced_prompt = cartoon_template.format(dream_text=dream_text)
+    
     client = InferenceClient(token=token)
-    image = client.text_to_image(dream_text, model=model_id)
+    image = client.text_to_image(enhanced_prompt, model=model_id)
     
     return image
 
