@@ -3,4 +3,11 @@ pillow
 python-dotenv
 pybase64
 huggingface_hub
-speech_recognition
+SpeechRecognition
+fal-client
+requests
+google-cloud-video-intelligence
+imageio
+imageio-ffmpeg
+numpy
+opencv-python
